@@ -11,7 +11,7 @@ const listingSchema = new Schema({
     },
     image: {
     type: String,
-    default: "https://images.unsplash.com/photo-..."
+    default: "https://unsplash.com/photos/a-courtyard-with-chairs-and-umbrellas-in-front-of-a-building-xHAMtXYikkI"
 
         //getting error in these line of code while inserting the data in the database (Error> Listing Validation Failed)
         // type: String,
