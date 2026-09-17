@@ -11,15 +11,8 @@ const listingSchema = new Schema({
     },
     image: {
     type: String,
-    default: "https://unsplash.com/photos/a-courtyard-with-chairs-and-umbrellas-in-front-of-a-building-xHAMtXYikkI"
-
-        //getting error in these line of code while inserting the data in the database (Error> Listing Validation Failed)
-        // type: String,
-        // default: "https://unsplash.com/photos/stone-fireplace-in-rustic-living-room-Q0OitqGyVWA",
-        // set: (v) => 
-        //     v=== "" 
-        //     ? "https://unsplash.com/photos/stone-fireplace-in-rustic-living-room-Q0OitqGyVWA"  
-        //     : v,
+    set: (v) => v === "" ? "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1000&q=80" : v,
+    // default: "https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=1000&q=80",
     },
     price: {
         type: Number,
