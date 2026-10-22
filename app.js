@@ -62,11 +62,16 @@ app.get("/listings/:id", async (req, res) => {
 });
 
 //Create route to handle form submission and create a new listing in the database.
-app.post("/listings", async (req, res) => {
+app.post("/listings", async (req, res, next) => {
     // let { title, description, image, price, location, country } = req.body;
-    const newListing = new Listing(req.body.listing);
-    await newListing.save();
+    try {
+        const newListing = new Listing(req.body.listing);
+        await newListing.save();
     res.redirect("/listings");
+    }
+    catch (err) {
+        next(err);
+    }
 });
 
 //Edit Route to render a form for editing an existing listing.
@@ -104,6 +109,11 @@ app.delete("/listings/:id", async (req, res) => {
 //     console.log("Sample listing saved:", sampleListing);
 //     res.send("Successful testing");
 // });
+
+//Using middleware to handle async errors in route handlers
+app.use((err, req, res, next) => {
+    res.send("Something went wrong.");
+});
 
 app.listen(8080, () => {
     console.log("Server is listening at port 8080");
