@@ -10,14 +10,12 @@
                     class="form-control" 
                     type="text" 
                     placeholder="Add a catchy title..." required>
+                    <div class="valid-feedback">Title Looks Good!</div>
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea 
-                    name="listing[description]" 
-                    class="form-control" 
-                    placeholder="Description" required>
-                </textarea>
+                <textarea name="listing[description]" class="form-control" placeholder="Description" required></textarea>
+                <div class="invalid-feedback">Please enter a short description.</div>
             </div>
             <div class="mb-3">
                 <label for="image" class="form-label">Image URL/Link</label>
@@ -26,6 +24,8 @@
                     class="form-control" 
                     type="text" 
                     placeholder="Image URL/Link">
+                    <div class="valid-feedback">Image URL/Link Looks Good!</div>
+                </input>
             </div>
             <div class="row">
                 <div class="mb-3 col-md-4">
@@ -35,6 +35,7 @@
                         class="form-control" 
                         type="number" 
                         placeholder="1200" required>
+                        <div class="invalid-feedback">Please enter a valid price.</div>
                 </div>
                 <div class="mb-3 col-md-8">
                     <label for="country" class="form-label">Country</label>
@@ -43,6 +44,7 @@
                         class="form-control" 
                         type="text" 
                         placeholder="USA" required>
+                        <div class="invalid-feedback">Please enter a valid country.</div>
                 </div>
             </div>
             <div class="mb-3">
@@ -52,6 +54,7 @@
                     class="form-control" 
                     type="text" 
                     placeholder="New York" required>
+                    <div class="invalid-feedback">Please enter a valid location.</div>
             </div>
             <button class="btn btn-dark add-btn mt-3" type="submit">Add</button>
             <br><br>
