@@ -7,6 +7,7 @@ const path = require("path");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
+const { listingSchema } = require("./schema.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -66,8 +67,10 @@ app.get("/listings/:id", wrapAsync(async (req, res) => {
 
 //Create route to handle form submission and create a new listing in the database.
 app.post("/listings", wrapAsync(async (req, res, next) => {
-    if (!req.body?.listing) {
-        throw new ExpressError(400, "Send valid data for listing");
+    let result = listingSchema.validate(req.body);
+    console.log(result);
+    if (result.error) {
+        throw new ExpressError(400, result.error);
     }
     // let { title, description, image, price, location, country } = req.body;
         const newListing = new Listing(req.body.listing);
