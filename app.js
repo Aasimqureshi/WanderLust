@@ -8,6 +8,7 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema } = require("./schema.js");
+const Review = require("./models/reviews.js");
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
 //Setting up the view engine and views directory for rendering EJS templates.
@@ -106,6 +107,18 @@ app.delete("/listings/:id", wrapAsync(async (req, res) => {
     let deletedListing = await Listing.findByIdAndDelete(id);
     console.log("Deleted listing:", deletedListing);
     res.redirect("/listings");
+}));
+
+//Reviews
+//Post route to handle the creation of a new review for a specific listing.
+app.post("/listings/:id/reviews", wrapAsync(async (req, res) => {
+    let listing = await Listing.findById(req.params.id);
+    let newReview = new Review(req.body.review);
+    listing.reviews.push(newReview);
+    await newReview.save();
+    await listing.save();
+
+    res.redirect(`/listings/${listing._id}`);
 }));
 
 //Testing route to create a sample listing in the database. This route is commented out and can be used for testing purposes.
