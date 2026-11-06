@@ -1,15 +1,12 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing.js");
 const methodOverride = require("method-override");
 const path = require("path");
 const ejsMate = require("ejs-mate");
-const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema, reviewSchema } = require("./schema.js");
-const Review = require("./models/reviews.js");
 const listingRoutes = require("./routes/listingRoutes.js");
+const reviewsRoutes = require("./routes/reviewsRoutes.js");
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
 //Setting up the view engine and views directory for rendering EJS templates.
@@ -30,6 +27,7 @@ app.use(express.json());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "/public")));
 app.use("/listings", listingRoutes);
+app.use("/listings/:id/reviews", reviewsRoutes);
 
 main().then(() => {
     console.log("Connected to MongoDB");
@@ -46,37 +44,6 @@ app.get("/", (req, res) => {
     res.send("Hii, I'm WanderLust App");
 });
 
-
-//Add middlewares function for server side validation for review
-const validateReview = (req, res, next) => {
-    let { error } = reviewSchema.validate(req.body);
-    if (error) {
-        let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400, errMsg);
-    } else {
-        next();
-    }
-};
-
-//Reviews
-//Post Review route to handle the creation of a new review for a specific listing.
-app.post("/listings/:id/reviews", validateReview, wrapAsync(async (req, res) => {
-    let listing = await Listing.findById(req.params.id);
-    let newReview = new Review(req.body.review);
-    listing.reviews.push(newReview);
-    await newReview.save();
-    await listing.save();
-
-    res.redirect(`/listings/${listing._id}`);
-}));
-
-//Delete Review Route
-app.delete("/listings/:id/reviews/:reviewId", wrapAsync(async (req, res) => {
-    let { id, reviewId } = req.params;
-    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/listings/${id}`);
-}));
 //Testing route to create a sample listing in the database. This route is commented out and can be used for testing purposes.
 // app.get("/listings", async (req, res) => {
 //     let sampleListing = new Listing({
