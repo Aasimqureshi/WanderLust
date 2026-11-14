@@ -8,6 +8,7 @@ const ExpressError = require("./utils/ExpressError.js");
 const listingRoutes = require("./routes/listingRoutes.js");
 const reviewsRoutes = require("./routes/reviewsRoutes.js");
 const session = require("express-session");
+const flash = require("connect-flash");
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
 //Setting up the view engine and views directory for rendering EJS templates.
@@ -27,8 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "/public")));
-app.use("/listings", listingRoutes);
-app.use("/listings/:id/reviews", reviewsRoutes);
+
 const sessionOptions = {
     secret: "mysupersecretstring",
     resave: false,
@@ -39,7 +39,9 @@ const sessionOptions = {
         httpOnly: true, // Cookie is only accessible via HTTP(S), not JavaScript
     },
 };
+
 app.use(session(sessionOptions));
+app.use(flash());
 
 main().then(() => {
     console.log("Connected to MongoDB");
@@ -69,6 +71,16 @@ app.get("/", (req, res) => {
 //     console.log("Sample listing saved:", sampleListing);
 //     res.send("Successful testing");
 // });
+
+//Middleware to set flash messages in the response locals for use in templates.
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    next();
+});
+
+//Using the listingRoutes and reviewsRoutes for handling requests related to listings and reviews respectively.
+app.use("/listings", listingRoutes);
+app.use("/listings/:id/reviews", reviewsRoutes);
 
 //Catch-all route to handle requests to undefined routes and return a 404 error.
 app.use((req, res, next) => {
