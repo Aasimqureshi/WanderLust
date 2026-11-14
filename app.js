@@ -7,6 +7,7 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const listingRoutes = require("./routes/listingRoutes.js");
 const reviewsRoutes = require("./routes/reviewsRoutes.js");
+const session = require("express-session");
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
 //Setting up the view engine and views directory for rendering EJS templates.
@@ -28,6 +29,12 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "/public")));
 app.use("/listings", listingRoutes);
 app.use("/listings/:id/reviews", reviewsRoutes);
+const sessionOptions = {
+    secret: "mysupersecretstring",
+    resave: false,
+    saveUninitialized: true,
+};
+app.use(session(sessionOptions));
 
 main().then(() => {
     console.log("Connected to MongoDB");
