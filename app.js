@@ -33,6 +33,11 @@ const sessionOptions = {
     secret: "mysupersecretstring",
     resave: false,
     saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // Cookie expires in 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000, // Cookie max age is 7 days
+        httpOnly: true, // Cookie is only accessible via HTTP(S), not JavaScript
+    },
 };
 app.use(session(sessionOptions));
 
