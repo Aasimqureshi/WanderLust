@@ -5,8 +5,9 @@ const methodOverride = require("method-override");
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
-const listingRoutes = require("./routes/listingRoutes.js");
-const reviewsRoutes = require("./routes/reviewsRoutes.js");
+const listingRouter = require("./routes/listingRoutes.js");
+const reviewsRouter = require("./routes/reviewsRoutes.js");
+const userRouter = require("./routes/userRoutes.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
@@ -89,8 +90,9 @@ app.use((req, res, next) => {
 });
 
 //Using the listingRoutes and reviewsRoutes for handling requests related to listings and reviews respectively.
-app.use("/listings", listingRoutes);
-app.use("/listings/:id/reviews", reviewsRoutes);
+app.use("/listings", listingRouter);
+app.use("/listings/:id/reviews", reviewsRouter);
+app.use("/", userRouter); //This will handle all the routes related to user authentication and management, such as login, logout, and registration.
 
 //Catch-all route to handle requests to undefined routes and return a 404 error.
 app.use((req, res, next) => {
