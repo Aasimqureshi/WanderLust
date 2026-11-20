@@ -38,6 +38,17 @@ router.post("/login", passport.authenticate("local", {
     async (req, res) => {
     req.flash("success", "Welcome back to WanderLust!");
     res.redirect("/listings");
-}); 
+});
+
+// GET route for handling user logout
+router.get("/logout", (req, res, next) => {
+    req.logout((err) => {
+        if(err) {
+            return next(err);
+        }
+        req.flash("success", "You are logged out!");
+        res.redirect("/login");
+    });
+});
 
 module.exports = router;
