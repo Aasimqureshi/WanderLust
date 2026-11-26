@@ -3,12 +3,10 @@ const router = express.Router();
 const Listing = require("../models/listing.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
+const listingController = require("../controllers/listingController.js");
 
 //Index route to display all the listings in the database.
-router.get("/", wrapAsync(async (req, res) => {
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs", {allListings});
-}));
+router.get("/", wrapAsync(listingController.index));
 
 //New route ko hume show route ke upar rakhna hoga warna error aayega ki /listings/new ko /listings/:id se match kar raha hai. 
 // app.js / listingRoutes new route ko id se match karega aur /listings/new id smajh ke dhundega. 
