@@ -12,69 +12,34 @@ router.get("/", wrapAsync(listingController.index));
 // app.js / listingRoutes new route ko id se match karega aur /listings/new id smajh ke dhundega. 
 
 //New route to render a form for creating a new listing.
-router.get("/new", isLoggedIn, (req, res) => {
-    res.render("listings/new.ejs");
-});
+router.get("/new", isLoggedIn, listingController.renderNewForm);
 
 //Show route
-router.get("/:id", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    const listing = await Listing.findById(id)
-    .populate({
-        path: "reviews",
-        populate: {
-            path: "author",
-        },
-    })
-    .populate("owner");
-    if(!listing) {
-        req.flash("error", "Listing does not exists!");
-        return res.redirect("/listings");
-    }
-    res.render("listings/show.ejs", { listing });
-}));
+router.get("/:id", wrapAsync(listingController.showtListing));
 
 //Create route to handle form submission and create a new listing in the database.
-router.post("/", isLoggedIn,
-    validateListing, wrapAsync(async (req, res, next) => {
-    // let { title, description, image, price, location, country } = req.body;
-    const newListing = new Listing(req.body.listing);
-    newListing.owner = req.user._id;
-    await newListing.save();
-    req.flash("success", "Successfully created a new listing!");
-    res.redirect("/listings");
-    }),
-);
+router.post("/", 
+    isLoggedIn, 
+    validateListing, 
+    wrapAsync(listingController.createListing));
 
 //Edit Route to render a form for editing an existing listing.
-router.get("/:id/edit", isLoggedIn, isOwner,
-    wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    const listing = await Listing.findById(id);
-    if(!listing) {
-        req.flash("error", "Listing does not exists!");
-        return res.redirect("/listings");
-    }
-    res.render("listings/edit.ejs", { listing });
-}));
+router.get("/:id/edit", 
+    isLoggedIn, 
+    isOwner,
+    wrapAsync(listingController.renderEditForm));
 
 //Update route to handle form submission and update an existing listing in the database.
-router.put("/:id", isLoggedIn, isOwner,
-    validateListing, wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    await Listing.findByIdAndUpdate(id, {...req.body.listing});
-    req.flash("success", "Successfully updated the listing!");
-    res.redirect(`/listings/${id}`);
-}));
+router.put("/:id", 
+    isLoggedIn, 
+    isOwner,
+    validateListing, 
+    wrapAsync(listingController.updateListing));
 
 //Delete route to handle the deletion of a listing from the database.
-router.delete("/:id", isLoggedIn, isOwner,
-    wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let deletedListing = await Listing.findByIdAndDelete(id);
-    console.log("Deleted listing:", deletedListing);
-    req.flash("success", "Listing deleted!");
-    res.redirect("/listings");
-}));
+router.delete("/:id", 
+    isLoggedIn, 
+    isOwner,
+    wrapAsync(listingController.deleteListing));
 
 module.exports = router;
